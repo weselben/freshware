@@ -1,0 +1,35 @@
+name: Build and Push Docker Image to GHCR
+
+on:
+  push:
+    tags:
+      - '*'
+
+jobs:
+  build-and-push:
+    runs-on: ubuntu-latest
+
+    permissions:
+      contents: read
+      packages: write
+
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: Log in to GitHub Container Registry
+        run: echo "${{ secrets.GITHUB_TOKEN }}" | docker login ghcr.io -u $GITHUB_ACTOR --password-stdin
+
+      - name: Extract Tag Name
+        id: tag
+        run: echo "TAG=${GITHUB_REF#refs/tags/}" >> $GITHUB_ENV
+
+      - name: Build Docker Image
+        run: |
+          docker build -t ghcr.io/weselben/freshware:${{ env.TAG }} .
+          docker tag ghcr.io/weselben/freshware:${{ env.TAG }} ghcr.io/mg-wesel-gmbh/freshware:latest
+
+      - name: Push Docker Image
+        run: |
+          docker push ghcr.io/weselben/freshware:${{ env.TAG }}
+          docker push ghcr.io/weselben/freshware:latest

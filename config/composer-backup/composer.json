@@ -1,0 +1,86 @@
+{
+  "license": "proprietary",
+  "type": "project",
+  "require": {
+    "composer-runtime-api": "^2.0",
+    "frosh/lazy-sizes": "*",
+    "frosh/mail-platform-archive": "^3.4.0",
+    "frosh/platform-html-minify": "*",
+    "frosh/platform-thumbnail-processor": "^5.3.0",
+    "frosh/tools": "*",
+    "frosh/development-helper": "*",
+    "shopware/administration": "*",
+    "shopware/core": "v6.6.9.0",
+    "shopware/docker": "^0.1.0",
+    "shopware/storefront": "*",
+    "swag/platform-security": "^3.0.7",
+    "swag/swag-extension-store": "*",
+    "symfony/amqp-messenger": "*",
+    "symfony/expression-language": "^7.2",
+    "symfony/flex": "~2",
+    "symfony/runtime": "*"
+  },
+  "repositories": [
+    {
+      "type": "path",
+      "url": "custom/plugins/*",
+      "options": {
+        "symlink": true
+      }
+    },
+    {
+      "type": "path",
+      "url": "custom/plugins/*/packages/*",
+      "options": {
+        "symlink": true
+      }
+    },
+    {
+      "type": "path",
+      "url": "custom/static-plugins/*",
+      "options": {
+        "symlink": true
+      }
+    }
+// This needs to be uncommented till in use
+//    ,{
+//      "type": "composer",
+//      "url": "https://packages.shopware.com"
+//    }
+  ],
+  "autoload": {
+    "psr-4": {
+      "App\\": "src/"
+    }
+  },
+  "minimum-stability": "stable",
+  "prefer-stable": true,
+  "config": {
+    "allow-plugins": {
+      "symfony/flex": true,
+      "symfony/runtime": true
+    },
+    "optimize-autoloader": true,
+    "sort-packages": true
+  },
+  "scripts": {
+    "auto-scripts": {
+      "assets:install": "symfony-cmd"
+    },
+    "post-install-cmd": [
+      "@auto-scripts"
+    ],
+    "post-update-cmd": [
+      "@auto-scripts"
+    ]
+  },
+  "extra": {
+    "symfony": {
+      "allow-contrib": true,
+      "endpoint": [
+        "https://raw.githubusercontent.com/shopware/recipes/flex/main/index.json",
+        "flex://defaults"
+      ]
+    }
+  }
+}
