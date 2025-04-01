@@ -2,6 +2,8 @@
 
 This file documents the environment variables used by the application. Sensitive information, such as passwords and secret keys, should be replaced with appropriate values.
 
+## First two mysql variables only needed when using the mysql container instead of mariadb
+
 ### MYSQL_USER
 
 - **Value**: `shopware`
@@ -142,16 +144,6 @@ This file documents the environment variables used by the application. Sensitive
 - **Value**: `mariadb`
 - **Description**: The hostname of the MariaDB server.
 
-### JWT_PRIVATE_KEY
-
-- **Value**: `your_jwt_private_key`
-- **Description**: The private key for JSON Web Token (JWT) authentication, in PEM format, base64 encoded.
-
-### JWT_PUBLIC_KEY
-
-- **Value**: `your_jwt_public_key`
-- **Description**: The public key for JSON Web Token (JWT) authentication, in PEM format, base64 encoded.
-
 ### REDIS_URL
 
 - **Value**: `redis://redis:6379`
@@ -231,10 +223,6 @@ SW_CURRENCY=EUR
 SW_TASKS_ENABLED=0
 SHOP_DOMAIN=localhost
 SHOPWARE_CACHE_ID=fresh
-
-# JWT keys for authentication
-JWT_PRIVATE_KEY=your_jwt_private_key
-JWT_PUBLIC_KEY=your_jwt_public_key
 
 # Redis configuration
 REDIS_URL=redis://redis:6379

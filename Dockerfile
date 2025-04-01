@@ -133,6 +133,6 @@ USER www-data
 # Copy Backup composer.json just in case, to be in every freshware instanze, if something deletes the composer.json, this can be used to restore functionality
 COPY config/composer-backup/composer.json /var/www/freshware/composer.json.backup
 
-WORKDIR /var/www/html
+WORKDIR /var/www/freshware
 EXPOSE 9000
 ENTRYPOINT ["/bin/bash", "/entrypoint.sh"]

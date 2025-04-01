@@ -56,6 +56,20 @@ update_composer_json() {
   composer update -n
 }
 
+# Function to remove specific lines from docker.yaml
+remove_jwt_keys_from_docker_yaml() {
+  local file_path="/var/www/freshware/config/packages/docker.yaml"
+  if [ -f "$file_path" ]; then
+    echo "Removing JWT keys from $file_path"
+    sed -i '/api:/,/public_key_path:/d' "$file_path"
+  else
+    echo "File $file_path does not exist."
+    echo "JWT Tokens need to be mounted and changed manually to work (not intended)"
+    echo "Please check the docker.yaml file for JWT keys"
+    echo "-----------------------------------------------------"
+  fi
+}
+
 FILE=/freshware/freshware.lock
 
 #-------------------------------------------------------------
@@ -175,6 +189,9 @@ else
     php bin/console database:migrate --all
     php bin/console cache:clear
     php bin/console system:check -c pre_rollout
+
+    # Remove JWT keys from docker.yaml
+    remove_jwt_keys_from_docker_yaml
 
     echo ""
     echo "WOHOOO, mg-wesel-gmbh/freshware IS READY :) - let's get started"
