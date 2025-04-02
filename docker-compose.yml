@@ -1,6 +1,6 @@
 services:
   php:
-    image: ghcr.io/weselben/freshware:6.6.9.0-v0.1.0
+    image: ghcr.io/weselben/freshware:6.6.9.0-v0.1.1
     restart: unless-stopped
     env_file: .env
     volumes:
