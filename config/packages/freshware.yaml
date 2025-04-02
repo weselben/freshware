@@ -14,7 +14,8 @@ framework:
 
 shopware:
   api:
-    use_app_secret: true
+    jwt_key:
+      use_app_secret: true
   redis:
     connections:
       persistent:
