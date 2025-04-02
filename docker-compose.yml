@@ -1,0 +1,53 @@
+services:
+  php:
+    image: ghcr.io/weselben/freshware:6.6.9.0-v0.0.3
+    restart: unless-stopped
+    env_file: .env
+    volumes:
+      - dev_data:/var/www/freshware
+      - ./.env:/var/www/freshware/.env:ro
+    depends_on:
+      mariadb:
+        condition: service_started
+      redis:
+        condition: service_started
+    networks:
+      - freshware_network
+
+  mariadb:
+    image: mariadb:11.6.2
+    env_file: .env
+    volumes:
+      - mariadb_data:/var/lib/mysql
+    networks:
+      - freshware_network
+
+  redis:
+    image: redis:6.2
+    env_file: .env
+    networks:
+      - freshware_network
+
+  nginx:
+    image: nginx:latest
+    env_file: .env
+    volumes:
+      - ./nginx.conf:/etc/nginx/nginx.conf
+      - ./nginx-default.conf:/etc/nginx/conf.d/default.conf
+      - dev_data:/var/www/freshware
+    ports:
+      - "80:80"
+      - "443:443"
+    depends_on:
+      php:
+        condition: service_started
+    networks:
+      - freshware_network
+
+volumes:
+  mariadb_data:
+  dev_data:
+
+networks:
+  freshware_network:
+    driver: bridge
