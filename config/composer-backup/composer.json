@@ -42,7 +42,7 @@
         "symlink": true
       }
     }
-// This needs to be uncommented till in use
+// For this to be able to be implmeneted the projects need a valid auth.json file (structure can be google via shopwares docs)
 //    ,{
 //      "type": "composer",
 //      "url": "https://packages.shopware.com"
