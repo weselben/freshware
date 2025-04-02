@@ -4,25 +4,17 @@ This file documents the environment variables used by the application. Sensitive
 
 ## First two mysql variables only needed when using the mysql container instead of mariadb
 
-### MYSQL_USER
-
-- **Value**: `shopware`
-- **Description**: The username for the MySQL database connection.
-
-### MYSQL_PWD
-
-- **Value**: `your_mysql_password`
-- **Description**: The password for the MySQL database user.
-
 ### APP_SECRET
 
 - **Value**: `your_app_secret`
 - **Description**: A secret key used by the application for security-related operations, such as generating tokens or encrypting data.
+- **Generator**: https://numbergenerator.org/random-32-digit-hex-codes-generator
 
 ### INSTANCE_ID
 
 - **Value**: `your_instance_id`
 - **Description**: A unique identifier for this instance of the application.
+- **Generator**: https://numbergenerator.org/random-32-digit-hex-codes-generator
 
 ### BLUE_GREEN_DEPLOYMENT
 
@@ -84,11 +76,6 @@ This file documents the environment variables used by the application. Sensitive
 - **Value**: `http://localhost`
 - **Description**: The base URL of the application. Update this to match your deployment domain.
 
-### DATABASE_URL
-
-- **Value**: `mysql://shopware:your_mysql_password@mariadb:3306/shopware?charset=utf8mb4`
-- **Description**: The connection string for the database. Replace `your_mysql_password` with the actual password.
-
 ### MAILER_DSN
 
 - **Value**: `smtp://your_email:your_email_password@smtp.office365.com:587?encryption=tls`
@@ -114,6 +101,16 @@ This file documents the environment variables used by the application. Sensitive
 - **Value**: `your_mariadb_password`
 - **Description**: The password for the MariaDB database user.
 
+### MARIADB_HOST
+
+- **Value**: `mariadb`
+- **Description**: The hostname of the MariaDB server.
+
+### DATABASE_URL
+
+- **Value**: `mysql://shopware:your_mariadb_password@mariadb:3306/shopware?charset=utf8mb4`
+- **Description**: The connection string for the database. Replace `your_mysql_password` with the actual password.
+
 ### COMPOSER_HOME
 
 - **Value**: `/var/www/freshware`
@@ -138,11 +135,6 @@ This file documents the environment variables used by the application. Sensitive
 
 - **Value**: `localhost`
 - **Description**: The domain name of the shop. Update this to match your deployment domain.
-
-### MARIADB_HOST
-
-- **Value**: `mariadb`
-- **Description**: The hostname of the MariaDB server.
 
 ### REDIS_URL
 
@@ -173,10 +165,7 @@ This file documents the environment variables used by the application. Sensitive
 ```dotenv
 # Example .env file
 
-# Database configuration
-MYSQL_USER=shopware
-MYSQL_PWD=your_mysql_password
-DATABASE_URL=mysql://shopware:your_mysql_password@mariadb:3306/shopware?charset=utf8mb4
+
 
 # Application secrets and identifiers
 APP_SECRET=your_app_secret
@@ -212,6 +201,9 @@ MARIADB_DATABASE=shopware
 MARIADB_USER=shopware
 MARIADB_PASSWORD=your_mariadb_password
 MARIADB_HOST=mariadb
+# Database configuration
+DATABASE_URL=mysql://shopware:your_mariadb_password@mariadb:3306/shopware?charset=utf8mb4
+
 
 # Composer configuration
 COMPOSER_HOME=/var/www/freshware
