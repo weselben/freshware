@@ -1,16 +1,29 @@
+parameters:
+  shopware.cache.prefix: '%env(string:SW_CACHE_PREFIX)%'
+
 framework:
   cache:
-    default_redis_provider: '%env(string:REDIS_URL)%/0'
+    default_redis_provider: 'redis://%env(string:REDIS_HOST)%:%env(string:REDIS_PORT)%/0?timeout=3&read_timeout=3&retry_interval=3'
+    app: cache.adapter.redis
+    system: cache.adapter.redis
     pools:
       cache.http:
         adapter: cache.adapter.redis_tag_aware
         tags: cache.tags
   session:
-    handler_id: '%env(string:REDIS_URL)%/1'
+    handler_id: 'redis://%env(string:REDIS_HOST)%:%env(string:REDIS_PORT)%/1?timeout=3&read_timeout=3&retry_interval=3'
   secrets:
     enabled: false
   mailer:
-    message_bus: 'messenger.default_bus'
+    message_bus: messenger.default_bus
+  messenger:
+    transports:
+      async:
+        dsn: 'amqp://%env(string:RABBITMQ_DEFAULT_USER)%:%env(string:RABBITMQ_DEFAULT_PASS)%@%env(string:AMQP_HOST)%:%env(string:AMQP_PORT)%/%2f'
+        options:
+          auto_setup: true
+          read_timeout: 3
+          heartbeat: 60
 
 shopware:
   api:
@@ -19,27 +32,30 @@ shopware:
   redis:
     connections:
       persistent:
-        dsn: '%env(string:REDIS_URL)%/2?persistent=1'
+        dsn: 'redis://%env(string:REDIS_HOST)%:%env(string:REDIS_PORT)%/2?persistent=1&timeout=3&read_timeout=3&retry_interval=3'
   number_range:
-    increment_storage: 'redis'
+    increment_storage: redis
     config:
-      connection: 'persistent'
+      connection: persistent
   cart:
     storage:
-      type: 'redis'
+      type: redis
       config:
-        connection: 'persistent'
+        connection: persistent
     compress: true
     compression_method: zstd
   cache:
     cache_compression: true
-    cache_compression_method: 'zstd'
+    cache_compression_method: zstd
     tagging:
       each_config: false
       each_snippet: false
       each_theme_config: false
   admin_worker:
-    enable_admin_worker: false
+    enable_admin_worker: '%env(bool:ENABLE_ADMIN_WORKER)%'
+#  product_stream:
+#    indexing: '%env(bool:PRODUCT_STREAM_INDEXING)%'
+
 
 monolog:
   handlers:

@@ -29,17 +29,21 @@ RUN set -eux; \
         libssl-dev libzstd-dev libsoapysdr-dev autoconf gcc g++ make pkg-config re2c bison zlib1g-dev \
         libpq-dev libxslt1-dev libsqlite3-dev libpcre2-dev libedit-dev default-mysql-client git \
         gosu sudo unzip bzip2 ssmtp lsof openssh-server cron nano jq chromium xdg-utils libsodium-dev \
-        libpcre3 tzdata wget mariadb-client \
+        libpcre3 tzdata wget mariadb-client gettext-base \
     && rm -rf /var/lib/apt/lists/* /var/cache/apt/*
 
 # Set environment variables
+#ENV SW6VERSION="v6.6.10.3"
+ENV SW6VERSION="v6.6.9.0"
+ENV FRESHWARE_VERSION="0.2.0"
 ENV TZ=Europe/Berlin
 ENV SW_TASKS_ENABLED=0
 ENV SSH_USER=not-set
 ENV SSH_PWD=not-set
 ENV SW_CURRENCY=EUR
 ENV COMPOSER_ALLOW_SUPERUSER=1
-ENV SW6VERSION="v6.6.9.0"
+ENV TASKS_STARTUP=0
+ENV WORKER_STARTUP=0
 ENV PATH="/usr/local/bin:/usr/sbin:${PATH}"
 
 # Configure timezone
@@ -56,7 +60,10 @@ RUN set -eux; \
     && echo "export SW_CURRENCY=${SW_CURRENCY}" >> /etc/profile \
     && echo "export COMPOSER_ALLOW_SUPERUSER=${COMPOSER_ALLOW_SUPERUSER}" >> /etc/profile \
     && echo "export SW6VERSION=${SW6VERSION}" >> /etc/profile \
-    && echo 'export PATH="/usr/local/bin:/usr/sbin:${PATH}"' >> /etc/profile
+    && echo "export FRESHWARE_VERSION=${FRESHWARE_VERSION}" >> /etc/profile \
+    && echo 'export PATH="/usr/local/bin:/usr/sbin:${PATH}"' >> /etc/profile \
+    && echo "export TASKS_STARTUP=${TASKS_STARTUP}" >> /etc/profile \
+    && echo "export WORKER_STARTUP=${WORKER_STARTUP}" >> /etc/profile
 
 # Configure and install PHP extensions
 RUN set -eux; \
@@ -77,9 +84,8 @@ RUN set -eux; \
     done
 
 # Copy PHP configuration files
-COPY ./config/php/*.ini /usr/local/etc/php/conf.d/
-COPY ./config/php/*.ini /usr/local/etc/php-fpm.d/
-COPY ./config/php/www.conf /usr/local/etc/php-fpm.d/www.conf
+COPY ./config/php/freshware.ini /etc/freshware/templates/php/php.ini.template
+COPY ./config/php/www.conf /etc/freshware/templates/php/www.conf.template
 
 # Copy Composer from the Composer Builder stage
 COPY --from=composer-builder /usr/local/bin/composer /usr/local/bin/composer
@@ -117,11 +123,13 @@ USER root
 
 COPY config/packages/freshware.yaml /var/www/freshware/config/packages/freshware.yaml
 
+RUN mkdir -p /etc/freshware/templates/php/
+
 # Set permissions and create additional directory
 RUN set -eux; \
     chown -R 33:33 /var/www /var/log \
     && mkdir -p /freshware \
-    && chown -R 33:33 /freshware
+    && chown -R 33:33 /freshware /etc/freshware /usr/local/etc/php/conf.d /usr/local/etc/php-fpm.d
 
 # Copy and configure entrypoint script
 COPY entrypoint.sh /entrypoint.sh
@@ -136,3 +144,4 @@ COPY config/composer-backup/composer.json /var/www/freshware/composer.json.backu
 WORKDIR /var/www/freshware
 EXPOSE 9000
 ENTRYPOINT ["/bin/bash", "/entrypoint.sh"]
+CMD ["php-fpm"]
