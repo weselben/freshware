@@ -156,7 +156,7 @@ if [ "${SKIP_INSTALLATION_CHECK}" = "1" ] || [ -f "$FILE" ]; then
     php bin/console assets:install
     php bin/console database:migrate --all
     if [ "${REMOVE_CACHE_AO_AUTOLOAD_FILES}" = "1" ]; then
-      if [ "${TASKER_STARTUP}" != "1" ] || [ "${TASKER_STARTUP}" != "1" ]; then
+      if [ "${TASKER_STARTUP}" != "1" ] || [ "${WORKER_STARTUP}" != "1" ]; then
         php bin/console cache:pool:clear --all
         if ! rm -rf /var/www/freshware/var/cache/dev_*; then
           rm -rf /var/www/freshware/var/cache/prod_*
