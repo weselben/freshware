@@ -33,8 +33,7 @@ RUN set -eux; \
     && rm -rf /var/lib/apt/lists/* /var/cache/apt/*
 
 # Set environment variables
-#ENV SW6VERSION="v6.6.10.3"
-ENV SW6VERSION="v6.6.9.0"
+ENV SW6VERSION="v6.6.10.3"
 ENV FRESHWARE_VERSION="0.2.0"
 ENV TZ=Europe/Berlin
 ENV SW_TASKS_ENABLED=0

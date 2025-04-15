@@ -53,8 +53,8 @@ shopware:
       each_theme_config: false
   admin_worker:
     enable_admin_worker: '%env(bool:ENABLE_ADMIN_WORKER)%'
-#  product_stream:
-#    indexing: '%env(bool:PRODUCT_STREAM_INDEXING)%'
+  product_stream:
+    indexing: '%env(bool:PRODUCT_STREAM_INDEXING)%'
 
 
 monolog:
