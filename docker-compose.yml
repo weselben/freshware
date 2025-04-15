@@ -1,22 +1,80 @@
 services:
   php:
-    image: ghcr.io/weselben/freshware:6.6.9.0-v0.1.1
+    #image: ghcr.io/weselben/freshware:6.6.9.0-v0.1.1
+    build:
+        context: .
+        dockerfile: Dockerfile
     restart: unless-stopped
-    env_file: .env
+    env_file: example.env
     volumes:
       - dev_data:/var/www/freshware
-      - ./.env:/var/www/freshware/.env:ro
+      - ./.tmp/freshware:/freshware
+      - ./example.env:/var/www/freshware/.env:ro
     depends_on:
       mariadb:
         condition: service_started
       redis:
+        condition: service_started
+      rabbitmq:
+        condition: service_started
+    networks:
+      - freshware_network
+
+  worker:
+    #image: ghcr.io/weselben/freshware:6.6.9.0-v0.1.1
+    build:
+        context: .
+        dockerfile: Dockerfile
+    restart: unless-stopped
+    env_file: example.env
+    environment:
+      # WORKER_STARTUP=1 is needed to start the tasker instead of the php-fpm process
+      - WORKER_STARTUP=1
+    volumes:
+      - dev_data:/var/www/freshware
+      - ./example.env:/var/www/freshware/.env:ro
+      - ./.tmp/freshware:/freshware
+    depends_on:
+      mariadb:
+        condition: service_started
+      redis:
+        condition: service_started
+      rabbitmq:
+        condition: service_started
+      php:
+        condition: service_started
+    networks:
+      - freshware_network
+
+  tasker:
+    #image: ghcr.io/weselben/freshware:6.6.9.0-v0.1.1
+    build:
+      context: .
+      dockerfile: Dockerfile
+    restart: unless-stopped
+    env_file: example.env
+    environment:
+      # TASKER_STARTUP=1 is needed to start the tasker instead of the php-fpm process
+      - TASKER_STARTUP=1
+    volumes:
+      - dev_data:/var/www/freshware
+      - ./example.env:/var/www/freshware/.env:ro
+      - ./.tmp/freshware:/freshware
+    depends_on:
+      mariadb:
+        condition: service_started
+      redis:
+        condition: service_started
+      rabbitmq:
+        condition: service_started
+      php:
         condition: service_started
     networks:
       - freshware_network
 
   mariadb:
     image: mariadb:11.6.2
-    env_file: .env
+    env_file: example.env
     volumes:
       - mariadb_data:/var/lib/mysql
     networks:
@@ -24,13 +82,25 @@ services:
 
   redis:
     image: redis:6.2
-    env_file: .env
+    env_file: example.env
+    networks:
+      - freshware_network
+
+  rabbitmq:
+    image: rabbitmq:4.0.8-management
+    restart: unless-stopped
+    env_file: example.env
+    volumes:
+      - rabbitmq_data:/var/lib/rabbitmq
+    ports:
+      - "5672:5672"
+      - "15672:15672"
     networks:
       - freshware_network
 
   nginx:
     image: nginx:latest
-    env_file: .env
+    env_file: example.env
     volumes:
       - ./nginx.conf:/etc/nginx/nginx.conf
       - ./nginx-default.conf:/etc/nginx/conf.d/default.conf
@@ -47,6 +117,7 @@ services:
 volumes:
   mariadb_data:
   dev_data:
+  rabbitmq_data:
 
 networks:
   freshware_network:
