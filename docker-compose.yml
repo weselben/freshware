@@ -1,6 +1,5 @@
 services:
   php:
-    #image: ghcr.io/weselben/freshware:6.6.9.0-v0.1.1
     build:
         context: .
         dockerfile: Dockerfile
@@ -21,7 +20,6 @@ services:
       - freshware_network
 
   worker:
-    #image: ghcr.io/weselben/freshware:6.6.9.0-v0.1.1
     build:
         context: .
         dockerfile: Dockerfile
@@ -47,7 +45,6 @@ services:
       - freshware_network
 
   tasker:
-    #image: ghcr.io/weselben/freshware:6.6.9.0-v0.1.1
     build:
       context: .
       dockerfile: Dockerfile

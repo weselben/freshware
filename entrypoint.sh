@@ -135,6 +135,10 @@ if [ "${SKIP_INSTALLATION_CHECK}" = "1" ] || [ -f "$FILE" ]; then
     echo "-----------------------------------------------------"
     cd /var/www/html
 
+    echo "FRESHWARE: Removing JWT keys from docker.yaml..."
+        # Remove JWT keys from docker.yaml
+        remove_jwt_keys_from_docker_yaml
+
     #-------------------------------------------------------------
     #  Update composer.json using remote URL if needed.
     #-------------------------------------------------------------
@@ -167,9 +171,6 @@ if [ "${SKIP_INSTALLATION_CHECK}" = "1" ] || [ -f "$FILE" ]; then
       fi
     fi
     php bin/console system:check -c pre_rollout
-
-    # Remove JWT keys from docker.yaml
-    remove_jwt_keys_from_docker_yaml
 
     # Check if Frosh plugins installation is enabled
     if [ "${INSTALL_FROSH_PLUGINS}" = "1" ]; then
@@ -269,6 +270,10 @@ else
         echo "FRESHWARE: Installing Shopware Basic..."
         cd /var/www/html
 
+        echo "FRESHWARE: Removing JWT keys from docker.yaml..."
+            # Remove JWT keys from docker.yaml
+            remove_jwt_keys_from_docker_yaml
+
         #-------------------------------------------------------------
         #  Update composer.json using remote URL if needed.
         #  This function checks the environment variable "COMPOSER_JSON_REMOTE_URL"
@@ -278,6 +283,7 @@ else
 
         # Perform installation steps
         php bin/console system:install --force
+        php bin/console dotenv:dump .env
         php bin/console assets:install
 
         # Use SHOP_DOMAIN environment variable for storefront creation
