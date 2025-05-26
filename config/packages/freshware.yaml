@@ -1,6 +1,5 @@
 parameters:
   shopware.cache.prefix: '%env(string:SW_CACHE_PREFIX)%'
-  default_increment_storage: 'SQL'
 
 framework:
   cache:
@@ -35,7 +34,9 @@ shopware:
       persistent:
         dsn: 'redis://%env(string:REDIS_HOST)%:%env(string:REDIS_PORT)%/2?persistent=1&timeout=3&read_timeout=3&retry_interval=3'
   number_range:
-    increment_storage: 'SQL'
+    increment_storage: 'redis'
+    config:
+      connection: 'persistent'
   cart:
     storage:
       type: 'redis'
