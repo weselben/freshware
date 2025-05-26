@@ -80,6 +80,8 @@ services:
   redis:
     image: redis:6.2
     env_file: example.env
+    volumes:
+      - redis_data:/data
     networks:
       - freshware_network
 
@@ -115,6 +117,7 @@ volumes:
   mariadb_data:
   dev_data:
   rabbitmq_data:
+  redis_data:
 
 networks:
   freshware_network:
