@@ -64,6 +64,34 @@ update_composer_json() {
   composer update -n
 }
 
+# Function to cleanup old theme folders
+cleanup_old_theme_folders() {
+  local theme_dir="/var/www/freshware/public/theme"
+  local days_threshold=90
+
+  echo "-----------------------------------------------------"
+  echo "FRESHWARE: Checking for old theme folders (>${days_threshold} days)..."
+
+  if [ -d "$theme_dir" ]; then
+    # Find directories in theme folder older than 90 days and remove them
+    old_themes=$(find "$theme_dir" -mindepth 1 -maxdepth 1 -type d -mtime +${days_threshold} -print)
+
+    if [ -z "$old_themes" ]; then
+      echo "FRESHWARE: No old theme folders found to clean up."
+    else
+      echo "FRESHWARE: Found old theme folders to remove:"
+      echo "$old_themes"
+      echo "FRESHWARE: Removing old theme folders..."
+      find "$theme_dir" -mindepth 1 -maxdepth 1 -type d -mtime +${days_threshold} -exec rm -rf {} \;
+      echo "FRESHWARE: Old theme folders cleanup complete."
+    fi
+  else
+    echo "FRESHWARE: Theme directory $theme_dir does not exist."
+  fi
+
+  echo "-----------------------------------------------------"
+}
+
 # Function to remove specific lines from docker.yaml
 remove_jwt_keys_from_docker_yaml() {
   local file_path="/var/www/freshware/config/packages/docker.yaml"
@@ -144,10 +172,14 @@ if [ "${SKIP_INSTALLATION_CHECK}" = "1" ] || [ -f "$FILE" ]; then
     #-------------------------------------------------------------
 
     if [ "${WORKER_STARTUP}" = "1" ]; then
+        # Clean up old theme folders before sleep
+        cleanup_old_theme_folders
         sleep 30
         update_composer_json
         composer install -n
     elif [ "${TASKER_STARTUP}" = "1" ]; then
+        # Clean up old theme folders before sleep
+        cleanup_old_theme_folders
         sleep 60
         update_composer_json
         composer install -n
