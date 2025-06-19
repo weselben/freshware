@@ -170,7 +170,12 @@ if [ "${SKIP_INSTALLATION_CHECK}" = "1" ] || [ -f "$FILE" ]; then
         php bin/console cache:warmup
       fi
     fi
+    if [ "${WORKER_STARTUP}" != "1" ] && [ "${TASKER_STARTUP}" != "1" ] && [ "${COMPILE_THEME_ON_BOOT}" = "1" ];then
+      php bin/console theme:compile --active-only
+      php bin/console dal:refresh:index
+    fi
     php bin/console system:check -c pre_rollout
+
 
     # Check if Frosh plugins installation is enabled
     if [ "${INSTALL_FROSH_PLUGINS}" = "1" ]; then
