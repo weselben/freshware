@@ -172,8 +172,12 @@ if [ "${SKIP_INSTALLATION_CHECK}" = "1" ] || [ -f "$FILE" ]; then
     fi
     if [ "${WORKER_STARTUP}" != "1" ] && [ "${TASKER_STARTUP}" != "1" ] && [ "${COMPILE_THEME_ON_BOOT}" = "1" ];then
       php bin/console theme:compile --active-only
+    fi
+
+    if [ "${WORKER_STARTUP}" != "1" ] && [ "${TASKER_STARTUP}" != "1" ] && [ "${DAL_REFRESH_ON_BOOT}" = "1" ];then
       php bin/console dal:refresh:index
     fi
+    
     php bin/console system:check -c pre_rollout
 
 
