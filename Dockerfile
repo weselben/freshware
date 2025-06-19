@@ -34,7 +34,7 @@ RUN set -eux; \
 
 # Set environment variables
 ENV SW6VERSION="v6.6.10.5"
-ENV FRESHWARE_VERSION="0.2.7"
+ENV FRESHWARE_VERSION="0.2.8"
 ENV TZ=Europe/Berlin
 ENV SW_TASKS_ENABLED=0
 ENV SSH_USER=not-set
