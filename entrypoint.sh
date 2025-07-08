@@ -249,7 +249,7 @@ if [ "${SKIP_INSTALLATION_CHECK}" = "1" ] || [ -f "$FILE" ]; then
     if [ "${WORKER_STARTUP}" = "1" ]; then
         echo "FRESHWARE: Starting worker..."
         while true; do
-            php bin/console messenger:consume async failed low_priority --memory-limit=${WORKER_MEMORY_LIMIT} --time-limit=${WORKER_TIME_LIMIT}
+            php bin/console messenger:consume async failed low_priority --memory-limit=${WORKER_MEMORY_LIMIT} --time-limit=${WORKER_TIME_LIMIT} ${WORKER_CUSTOM_PARAMS}
             if [ $? -ne 0 ]; then
                 echo "FRESHWARE: Worker process exited with error. Exiting container..."
                 exit 1
@@ -261,7 +261,7 @@ if [ "${SKIP_INSTALLATION_CHECK}" = "1" ] || [ -f "$FILE" ]; then
         echo "FRESHWARE: Starting task-schedule..."
         while true; do
             php bin/console scheduled-task:register
-            php bin/console scheduled-task:run --memory-limit=${TASKER_MEMORY_LIMIT} --time-limit=${TASKER_TIME_LIMIT}
+            php bin/console scheduled-task:run --memory-limit=${TASKER_MEMORY_LIMIT} --time-limit=${TASKER_TIME_LIMIT} ${TASKER_CUSTOM_PARAMS}
             if [ $? -ne 0 ]; then
                 echo "FRESHWARE: Tasker process exited with error. Exiting container..."
                 exit 1
