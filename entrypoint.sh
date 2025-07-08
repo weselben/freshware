@@ -248,11 +248,19 @@ if [ "${SKIP_INSTALLATION_CHECK}" = "1" ] || [ -f "$FILE" ]; then
 
     if [ "${WORKER_STARTUP}" = "1" ]; then
         echo "FRESHWARE: Starting worker..."
-        php bin/console messenger:consume async failed low_priority --memory-limit=${WORKER_MEMORY_LIMIT} --time-limit=${WORKER_TIME_LIMIT}
+        while true; do
+            php bin/console messenger:consume async failed low_priority --memory-limit=${WORKER_MEMORY_LIMIT} --time-limit=${WORKER_TIME_LIMIT}
+            echo "FRESHWARE: Worker process exited. Restarting in 5 seconds..."
+            sleep 5
+        done
     elif [ "${TASKER_STARTUP}" = "1" ]; then
         echo "FRESHWARE: Starting task-schedule..."
-        php bin/console scheduled-task:register
-        php bin/console scheduled-task:run --memory-limit=${TASKER_MEMORY_LIMIT} --time-limit=${TASKER_TIME_LIMIT}
+        while true; do
+            php bin/console scheduled-task:register
+            php bin/console scheduled-task:run --memory-limit=${TASKER_MEMORY_LIMIT} --time-limit=${TASKER_TIME_LIMIT}
+            echo "FRESHWARE: Tasker process exited. Restarting in 5 seconds..."
+            sleep 5
+        done
     else
         exec "$@"
         PID=$!
