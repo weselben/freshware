@@ -173,13 +173,17 @@ if [ "${SKIP_INSTALLATION_CHECK}" = "1" ] || [ -f "$FILE" ]; then
 
     if [ "${WORKER_STARTUP}" = "1" ]; then
         # Clean up old theme folders before sleep
-        cleanup_old_theme_folders
+        if [ "${FRESHWARE_CLEANUP_OLD_THEMES}" = "true" ]; then
+            cleanup_old_theme_folders
+        fi
         sleep 30
         update_composer_json
         composer install -n
     elif [ "${TASKER_STARTUP}" = "1" ]; then
         # Clean up old theme folders before sleep
-        cleanup_old_theme_folders
+        if [ "${FRESHWARE_CLEANUP_OLD_THEMES}" = "true" ]; then
+            cleanup_old_theme_folders
+        fi
         sleep 60
         update_composer_json
         composer install -n
