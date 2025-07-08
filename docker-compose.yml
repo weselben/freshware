@@ -80,7 +80,7 @@ services:
       sh -c "chown -vR 33:33 /var/www/freshware/var /var/www/freshware /freshware"
   
   php:
-    image: ghcr.io/weselben/freshware:6.6.10.3-v0.2.5
+    image: ghcr.io/weselben/freshware:6.6.10.3-v0.2.9
     restart: unless-stopped
     env_file: example.env
     volumes:
@@ -137,7 +137,7 @@ services:
       - freshware_network
 
   worker:
-    image: ghcr.io/weselben/freshware:6.6.10.3-v0.2.5
+    image: ghcr.io/weselben/freshware:6.6.10.3-v0.2.9
     restart: unless-stopped
     env_file: example.env
     environment:
@@ -194,7 +194,7 @@ services:
       - freshware_network
 
   tasker:
-    image: ghcr.io/weselben/freshware:6.6.10.3-v0.2.5
+    image: ghcr.io/weselben/freshware:6.6.10.3-v0.2.9
     restart: unless-stopped
     env_file: example.env
     environment:
