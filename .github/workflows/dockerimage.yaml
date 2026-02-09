@@ -2,8 +2,10 @@ name: Build and Push Docker Image to GHCR
 
 on:
   push:
+    branches:
+      - '**'        # Now triggers on every commit to any branch
     tags:
-      - '*'
+      - '*'         # Keeps triggering on tags
 
 jobs:
   build-and-push:
@@ -18,18 +20,28 @@ jobs:
         uses: actions/checkout@v4
 
       - name: Log in to GitHub Container Registry
+        # Logic check: Only log in if the push is a tag
+        if: github.ref_type == 'tag'
         run: echo "${{ secrets.GITHUB_TOKEN }}" | docker login ghcr.io -u $GITHUB_ACTOR --password-stdin
 
       - name: Extract Tag Name
         id: tag
-        run: echo "TAG=${GITHUB_REF#refs/tags/}" >> $GITHUB_ENV
+        run: |
+          # If it's a tag, use it. If it's a branch, use a fallback name for the build.
+          if [ "${{ github.ref_type }}" = "tag" ]; then
+            echo "TAG=${GITHUB_REF#refs/tags/}" >> $GITHUB_ENV
+          else
+            echo "TAG=local-check" >> $GITHUB_ENV
+          fi
 
       - name: Build Docker Image
         run: |
           docker build -t ghcr.io/weselben/freshware:${{ env.TAG }} .
-          docker tag ghcr.io/weselben/freshware:${{ env.TAG }} ghcr.io/weselben/freshware:latest
 
       - name: Push Docker Image
+        # Logic check: Only push if the push is a tag
+        if: github.ref_type == 'tag'
         run: |
+          docker tag ghcr.io/weselben/freshware:${{ env.TAG }} ghcr.io/weselben/freshware:latest
           docker push ghcr.io/weselben/freshware:${{ env.TAG }}
           docker push ghcr.io/weselben/freshware:latest
