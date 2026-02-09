@@ -115,7 +115,7 @@ RUN set -eux; \
     && rm -rf /var/www/html \
     && ln -s /var/www/freshware /var/www/html \
     && cd /var/www/html \
-    && composer update -n
+    && php -d memory_limit=7168M /usr/local/bin/composer update -n
 
 # Switch back to root for final configurations
 USER root
